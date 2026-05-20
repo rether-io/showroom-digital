@@ -6,7 +6,7 @@ import { MessageCircle, Ruler, Hammer, Truck, ShieldCheck } from "lucide-react"
 import { TextRotate, TextRotateRef } from "@/components/ui/text-rotate"
 import { Badge } from "@/components/ui/badge"
 
-// ─── Dados do método ─────────────────────────────────────────────────────────
+// ─── Dados ───────────────────────────────────────────────────────────────────
 
 const steps = [
   {
@@ -51,9 +51,57 @@ const steps = [
   },
 ]
 
-// ─── Item que dispara inView ──────────────────────────────────────────────────
+// ─── Card mobile (timeline) ───────────────────────────────────────────────────
 
-function StepItem({
+function MobileStepCard({
+  step,
+  index,
+  isLast,
+}: {
+  step: (typeof steps)[number]
+  index: number
+  isLast: boolean
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, margin: "-10% 0px" })
+  const Icon = step.icon
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -24 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="flex gap-4"
+    >
+      {/* Linha vertical + ícone */}
+      <div className="flex flex-col items-center">
+        <div className="h-11 w-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 z-10">
+          <Icon className="h-5 w-5 text-primary" />
+        </div>
+        {!isLast && (
+          <div className="w-px flex-1 bg-gradient-to-b from-primary/30 to-transparent mt-2" />
+        )}
+      </div>
+
+      {/* Conteúdo */}
+      <div className={`pb-10 ${isLast ? "" : ""}`}>
+        <span className="text-xs font-black text-primary/30 tracking-widest">{step.number}</span>
+        <h3 className="text-xl font-bold mt-0.5">{step.title}</h3>
+        <p className="text-xs font-semibold text-primary uppercase tracking-widest mt-1">
+          {step.tagline}
+        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+          {step.description}
+        </p>
+      </div>
+    </motion.div>
+  )
+}
+
+// ─── Item de scroll desktop ───────────────────────────────────────────────────
+
+function DesktopStepItem({
   step,
   index,
   activeIndex,
@@ -76,19 +124,16 @@ function StepItem({
   return (
     <div
       ref={ref}
-      className="h-screen flex items-center justify-center md:justify-start md:pl-16 lg:pl-24"
+      className="h-screen flex items-center pl-16 lg:pl-24"
     >
       <motion.div
-        animate={{ opacity: isActive ? 1 : 0.3, x: isActive ? 0 : -12 }}
+        animate={{ opacity: isActive ? 1 : 0.25, x: isActive ? 0 : -16 }}
         transition={{ duration: 0.4 }}
         className="flex flex-col gap-4 max-w-xs"
       >
-        {/* Número */}
-        <span className="text-7xl font-black text-primary/20 leading-none select-none">
+        <span className="text-8xl font-black text-primary/15 leading-none select-none">
           {step.number}
         </span>
-
-        {/* Ícone + título */}
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
             <Icon className="h-6 w-6 text-primary" />
@@ -98,8 +143,6 @@ function StepItem({
             <p className="text-sm text-muted-foreground">{step.tagline}</p>
           </div>
         </div>
-
-        {/* Barra de progresso */}
         <div className="h-0.5 w-24 rounded-full bg-muted overflow-hidden">
           <motion.div
             className="h-full bg-primary rounded-full"
@@ -129,8 +172,8 @@ export function MetodoSection() {
 
   return (
     <section id="metodo" className="w-full">
-      {/* Header fora do scroll */}
-      <div className="container px-4 md:px-6 pt-16 pb-4 text-center">
+      {/* Header */}
+      <div className="container px-4 md:px-6 pt-16 pb-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -149,12 +192,24 @@ export function MetodoSection() {
         </motion.div>
       </div>
 
-      {/* Scroll section */}
-      <div className="relative flex">
-        {/* ── Left: scrollable step items ── */}
-        <div className="w-full md:w-1/2">
+      {/* ── MOBILE: timeline vertical ── */}
+      <div className="md:hidden container px-6 pb-16">
+        {steps.map((step, i) => (
+          <MobileStepCard
+            key={i}
+            step={step}
+            index={i}
+            isLast={i === steps.length - 1}
+          />
+        ))}
+      </div>
+
+      {/* ── DESKTOP: scroll + sticky ── */}
+      <div className="hidden md:flex relative">
+        {/* Esquerda: itens que disparam inView */}
+        <div className="w-1/2">
           {steps.map((step, i) => (
-            <StepItem
+            <DesktopStepItem
               key={i}
               step={step}
               index={i}
@@ -164,10 +219,9 @@ export function MetodoSection() {
           ))}
         </div>
 
-        {/* ── Right: sticky text panel ── */}
-        <div className="hidden md:flex w-1/2 sticky top-0 h-screen items-center justify-center">
+        {/* Direita: painel sticky com TextRotate */}
+        <div className="w-1/2 sticky top-0 h-screen flex items-center justify-center">
           <div className="max-w-sm space-y-6 px-8">
-            {/* Número grande animado */}
             <AnimatePresence mode="wait">
               <motion.span
                 key={activeIndex + "-num"}
@@ -181,8 +235,7 @@ export function MetodoSection() {
               </motion.span>
             </AnimatePresence>
 
-            {/* Título com TextRotate */}
-            <div className="text-4xl font-bold overflow-hidden h-12">
+            <div className="overflow-hidden h-12">
               <TextRotate
                 ref={titleRef}
                 texts={steps.map((s) => s.title)}
@@ -201,7 +254,6 @@ export function MetodoSection() {
               />
             </div>
 
-            {/* Tagline */}
             <AnimatePresence mode="wait">
               <motion.p
                 key={activeIndex + "-tag"}
@@ -215,7 +267,6 @@ export function MetodoSection() {
               </motion.p>
             </AnimatePresence>
 
-            {/* Descrição completa */}
             <AnimatePresence mode="wait">
               <motion.p
                 key={activeIndex + "-desc"}
@@ -229,7 +280,6 @@ export function MetodoSection() {
               </motion.p>
             </AnimatePresence>
 
-            {/* Indicadores de passo */}
             <div className="flex gap-2 pt-2">
               {steps.map((_, i) => (
                 <div
