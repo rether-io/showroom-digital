@@ -15,11 +15,6 @@ import {
   Share2,
   MessageCircle,
   Home,
-  BedDouble,
-  UtensilsCrossed,
-  Briefcase,
-  Bath,
-  Tv,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { HeroParallax } from "@/components/ui/hero-parallax"
 import { GalleryGridBlock } from "@/components/ui/gallery-grid-block-shadcnui"
 import { TestimonialsSection } from "@/components/ui/3d-testimonails"
+import { MetodoSection } from "@/components/ui/metodo-section"
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -125,10 +121,10 @@ export function MoveisPlanejados() {
           </Link>
 
           <nav className="hidden md:flex gap-6">
-            {["Ambientes", "Portfólio", "Sobre", "Depoimentos", "Contato"].map((item) => (
+            {["Portfólio", "Método", "Sobre", "Depoimentos", "Contato"].map((item) => (
               <Link
                 key={item}
-                href={`#${item.toLowerCase().replace("ó", "o").replace("é", "e")}`}
+                href={`#${item.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")}`}
                 className="text-sm font-medium transition-colors hover:text-primary"
               >
                 {item}
@@ -178,7 +174,7 @@ export function MoveisPlanejados() {
             {["Ambientes", "Portfólio", "Sobre", "Depoimentos", "Contato"].map((item, index) => (
               <motion.div key={index} variants={itemFadeIn}>
                 <Link
-                  href={`#${item.toLowerCase().replace("ó", "o").replace("é", "e")}`}
+                  href={`#${item.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")}`}
                   className="flex items-center justify-between rounded-2xl px-3 py-2 text-lg font-medium hover:bg-accent"
                   onClick={toggleMenu}
                 >
@@ -198,111 +194,13 @@ export function MoveisPlanejados() {
         {/* Hero Parallax Showroom */}
         <HeroParallax products={SHOWROOM_PRODUCTS} />
 
-        {/* Ambientes / Services */}
-        <section id="ambientes" className="w-full py-12 md:py-24 lg:py-32">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="container px-4 md:px-6 border border-muted rounded-3xl"
-          >
-            <div className="flex flex-col items-center justify-center space-y-4 text-center py-10">
-              <div className="space-y-3">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="inline-block rounded-full bg-muted px-3 py-1 text-sm font-medium"
-                >
-                  Especialidades
-                </motion.div>
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
-                >
-                  Ambientes que Criamos
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed"
-                >
-                  Cada projeto é desenvolvido sob medida para o seu espaço e estilo de vida
-                </motion.p>
-              </div>
-            </div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="mx-auto grid max-w-5xl gap-4 py-12 md:grid-cols-2 lg:grid-cols-3"
-            >
-              {[
-                {
-                  icon: <UtensilsCrossed className="h-10 w-10 text-primary" />,
-                  title: "Cozinhas Planejadas",
-                  description: "Armários, gabinetes e bancadas personalizados para maximizar funcionalidade e beleza no ambiente mais importante da casa.",
-                },
-                {
-                  icon: <BedDouble className="h-10 w-10 text-primary" />,
-                  title: "Quartos e Closets",
-                  description: "Guarda-roupas, cabeceiras e closets sob medida que aproveitam cada centímetro do seu espaço com elegância.",
-                },
-                {
-                  icon: <Tv className="h-10 w-10 text-primary" />,
-                  title: "Salas de Estar e TV",
-                  description: "Estantes, painéis de TV e módulos decorativos que transformam sua sala em um ambiente sofisticado.",
-                },
-                {
-                  icon: <Briefcase className="h-10 w-10 text-primary" />,
-                  title: "Home Office",
-                  description: "Escritórios planejados para aumentar sua produtividade com conforto e organização sem abrir mão do estilo.",
-                },
-                {
-                  icon: <Bath className="h-10 w-10 text-primary" />,
-                  title: "Banheiros",
-                  description: "Gabinetes e nichos planejados que combinam praticidade e design para seu banheiro ou lavabo.",
-                },
-                {
-                  icon: <Home className="h-10 w-10 text-primary" />,
-                  title: "Ambientes Comerciais",
-                  description: "Lojas, escritórios e consultórios com móveis exclusivos que reforçam a identidade da sua marca.",
-                },
-              ].map((service, index) => (
-                <motion.div
-                  key={index}
-                  variants={itemFadeIn}
-                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                  className="group relative overflow-hidden rounded-3xl border p-6 shadow-sm transition-all hover:shadow-md bg-background/80"
-                >
-                  <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-all duration-300" />
-                  <div className="relative space-y-3">
-                    <div className="mb-4">{service.icon}</div>
-                    <h3 className="text-xl font-bold">{service.title}</h3>
-                    <p className="text-muted-foreground">{service.description}</p>
-                  </div>
-                  <div className="mt-4 flex items-center gap-2">
-                    <Link href="#portfolio" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-                      Ver projetos
-                    </Link>
-                    <ArrowRight className="h-4 w-4 text-primary" />
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        </section>
-
         {/* Portfolio */}
         <section id="portfolio">
           <GalleryGridBlock />
         </section>
+
+        {/* Método de Trabalho */}
+        <MetodoSection />
 
         {/* Sobre / About */}
         <section id="sobre" className="w-full py-12 md:py-24 lg:py-32">
@@ -360,48 +258,6 @@ export function MoveisPlanejados() {
               </motion.div>
             </div>
 
-            <div className="mt-12 px-6 pb-10">
-              <motion.h3
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-2xl font-bold tracking-tighter sm:text-3xl"
-              >
-                Nossa Equipe
-              </motion.h3>
-              <motion.div
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3"
-              >
-                {[
-                  { name: "Carlos Silva", role: "Fundador & Marceneiro Chefe", img: TEAM_IMAGES[0] },
-                  { name: "Ana Souza", role: "Designer de Interiores", img: TEAM_IMAGES[1] },
-                  { name: "Ricardo Alves", role: "Gerente de Projetos", img: TEAM_IMAGES[2] },
-                ].map((member, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemFadeIn}
-                    whileHover={{ y: -10 }}
-                    className="group relative overflow-hidden rounded-3xl"
-                  >
-                    <Image
-                      src={member.img}
-                      alt={member.name}
-                      width={400}
-                      height={400}
-                      className="h-[280px] w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-5 text-white">
-                      <h4 className="font-bold text-lg">{member.name}</h4>
-                      <p className="text-sm opacity-90">{member.role}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
           </motion.div>
         </section>
 
